@@ -1,0 +1,206 @@
+import random
+import time
+
+
+# ----------------------------------------------------------------------------------
+def clear_console():
+    # Print enough newlines to scroll the previous output out of view
+    print("\n" * 50)
+
+
+# ----------------------------------------------------------------------------------
+def toss():
+    global human_OE_choice, human_num_choice
+    command1 = False
+    while command1 == False:
+        print("This is a toss process")
+        try:
+            human_OE_choice = str.upper(input("Predict outcome of toss odd/even "))
+            if human_OE_choice in ["ODD", "EVEN"]:
+                command1 = True
+
+            else:
+                clear_console()
+                print("invalid input")
+                command1 = False
+
+        except ValueError:
+            clear_console()
+            print("Invalid input.")
+
+    command2 = False
+    while command2 == False:
+        try:
+            human_num_choice = int(input("select number 1 to 6 (included) and begin the toss "))
+            if human_num_choice in list(range(1, 7)):
+                command2 = True
+            else:
+                clear_console()
+                print("invalid input")
+                command2 = False
+
+        except ValueError:
+            clear_console()
+            print("Invalid input.")
+
+    ai_num = random.randint(1, 6)
+    print(f"you choose {human_num_choice} and prediction of toss as {human_OE_choice}")
+    time.sleep(2)
+    print(f"AI choose {ai_num}")
+    time.sleep(2)
+    print(f"toss output is {human_num_choice + ai_num}")
+    time.sleep(2)
+    if (human_num_choice + ai_num) % 2 == 0:
+        print("its even")
+    else:
+        print("its odd")
+    if (human_num_choice + ai_num) % 2 == 0 and human_OE_choice == "EVEN":
+        print("you won the toss")
+        toss_winner = "human"
+    elif (human_num_choice + ai_num) % 2 != 0 and human_OE_choice == "ODD":
+        print("you won the toss")
+        toss_winner = "human"
+    else:
+        print("AI won the toss")
+        toss_winner = "AI"
+    # time.sleep(1)
+    return toss_winner
+
+
+# --------------------------------------------------------------------------------------------
+
+def bat():
+    batter_finger = 0
+    bowler_finger = 1
+    total_score = 0
+    player = "user"
+    try:
+        while batter_finger != bowler_finger:
+            batter_fingers = int(input("You are batting enter the run you want to hit (0 to 6): "))
+            if 0 <= batter_fingers <= 6:
+                bowler_fingers = random.randint(1, 6)
+                print(f"Bowler shows {bowler_fingers} .")
+
+                if batter_fingers == bowler_fingers:
+                    print("You are out!")
+                    time.sleep(2)
+                    print(f"Your score: {total_score}")
+                    break
+                else:
+                    total_score = total_score + batter_fingers
+                    # time.sleep(2)
+                    print(f"Your score: {total_score}")
+            else:
+                print("Invalid input. Enter a number between 0 and 6.")
+    except ValueError:
+        print("Invalid input. Enter a valid number.")
+
+    return total_score
+
+
+# --------------------------------------------------------------------------------------------
+
+def ball():
+    AI_run_hit = 0
+    user_ball = 1
+    total_AI_score = 0
+    try:
+        while AI_run_hit != user_ball:
+            AI_run_hit = random.randint(0, 6)
+            user_ball = int(input("match the run hit by AI (0 to 6): "))
+            print(f"AI hits {AI_run_hit} .")
+            if 0 <= user_ball <= 6:
+                if AI_run_hit == user_ball:
+                    print("AI is out!")
+                    time.sleep(2)
+                    total_AI_score = total_AI_score
+                    print(f"AI score: {total_AI_score}")
+                else:
+                    total_AI_score = total_AI_score + AI_run_hit
+                    print(f"AI score: {total_AI_score}")
+            else:
+                print("Invalid input. Enter a number between 0 and 6.")
+    except ValueError:
+        print("Invalid input. Enter a valid number.")
+
+    return total_AI_score
+
+
+# --------------------------------------------------------------------------------------------
+
+def switching_side(innings, score):
+    global second_score, F_B
+    print("Switching side...")
+    time.sleep(2)
+    if innings == "bat":
+        print("now you will ball")
+        F_B="user"
+        second_score = ball()
+    elif innings == "ball":
+        print("now you will bat")
+        F_B="AI"
+        second_score = bat()
+    else:
+        pass
+
+    if score == second_score:
+        print("tie")
+    elif (score > second_score) and (F_B == "user"):
+        print("you wins !!!")
+    elif (score > second_score) and (F_B == "AI"):
+        print("AI wins !!!")
+    elif (score < second_score) and (F_B == "user"):
+        print("AI wins !!!")
+    elif (score < second_score) and (F_B == "AI"):
+        print("you wins !!!")
+    else:
+        pass
+
+
+# -----------------------------------------------------------------------------------------------
+
+def bat_or_ball(winner):
+    print("choosing bat or ball")
+    if winner == "AI":
+        print("AI will choose batting or bowling")
+        AI_BBC = random.randint(1, 2)
+        time.sleep(3)
+        if AI_BBC == 1:
+            print("AI choose to bat")
+            score = ball()
+            switching_side("ball", score)
+        else:
+            print("AI choose to ball")
+            score = bat()
+            print(f"Your final score: {score}")
+            switching_side("bat", score)
+    elif winner == "human":
+        print("you will choose batting or bowling")
+        command3 = False
+        while command3 == False:
+            try:
+                USER_BBC = str.upper(input("type 'bat' or 'ball'  "))
+                if USER_BBC in ["BAT", "BALL"]:
+                    command3 = True
+                    if USER_BBC == "BAT":
+                        score = bat()
+                        switching_side("bat", score)
+                    else:
+                        ball()
+                        score = ball()
+                        switching_side("ball", score)
+                else:
+                    clear_console()
+                    print("invalid input")
+                    command3 = False
+            except ValueError:
+                clear_console()
+                print("Invalid input.")
+    else:
+        print("an error occurred ")
+
+
+# --------------------------------------------------------------------------------------------
+
+winner = toss()
+bat_or_ball(winner)
